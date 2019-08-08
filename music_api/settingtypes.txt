@@ -1,0 +1,8 @@
+#Interval between attempts to play music
+music_time_interval (Interval between attempts to play music) int 300
+
+#Play music to all players simultaneously, ignoring track height parameters
+music_synchronized (Sychronized music for all players) bool false
+
+#Music volume
+music_global_gain (Music volume) float 0.4 0.0 1.0
