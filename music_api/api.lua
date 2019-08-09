@@ -5,9 +5,18 @@ local timer = 0
 
 local time_interval = minetest.settings:get("music_time_interval") or 300
 local synchronized_music = minetest.settings:get("music_synchronized") or false
-local global_gain = minetest.settings:get("music_global_gain") or 0.4
+local global_gain = minetest.settings:get("music_global_gain") or 0.35
+local add_random_delay = minetest.settings:get("music_add_random_delay") or false
+local maximum_random_delay = minetest.settings:get("music_maximum_random_delay") or 60
+local display_playback_messages = minetest.settings:get("music_display_playback_messages") or false
 
 local global_previous = ""
+local random_delay = 0
+
+--Initialize random delay on the first run
+if add_random_delay then
+    random_delay = math.random(maximum_random_delay)
+end
 
 minetest.register_on_joinplayer(function(player)
     local name = player:get_player_name()
@@ -51,7 +60,7 @@ minetest.register_globalstep(function(dtime)
 
     --Increment timer, return if it doesn't, reset it if it does and continue with function execution
     timer = timer + dtime
-    if timer < time_interval then return end
+    if timer < time_interval + random_delay then return end
     timer = 0
 
     --Return if no tracks are defined
@@ -68,7 +77,9 @@ minetest.register_globalstep(function(dtime)
             if track.name ~= global_previous and ((track.day and time > 0.25 and time < 0.75) or (track.night and time < 0.25 and time > 0.75)) then
                 table.insert(possible_tracks, track)
             end
-        end
+        end    if add_random_delay then
+        previous_delay = math.random(maximum_random_delay)
+    end
 
         --Return if no music fits
         if #possible_tracks == 0 then
@@ -103,7 +114,7 @@ minetest.register_globalstep(function(dtime)
             --Assemble list of fitting tracks
             for _,track in pairs(tracks) do
                 if track.name ~= v.previous and ((track.day and time > 0.25 and time < 0.75) or (track.night and ((time < 0.25 and time >= 0) or (time > 0.75 and time <= 1)))) and
-                player_pos.y > track.ymin and player_pos.y < track.ymax then
+                player_pos.y >= track.ymin and player_pos.y < track.ymax then
                     table.insert(possible_tracks, track)
                 end
             end
@@ -119,13 +130,20 @@ minetest.register_globalstep(function(dtime)
 
             --Start playback
             if not v.playing then
-                print("[Music API]: Starting playblack for:", k, track.name)
+                if display_playback_messages then
+                    print("[Music API]: Starting playblack for:", k, track.name, "Available tracks for user:", #possible_tracks, "Random delay:", random_delay)
+                end
                 minetest.sound_play(track.name, {to_player = k, gain = track.gain * global_gain})
                 v.playing = true
                 v.previous = track.name
                 minetest.after(track.length, reset_player_cooldown, k)
             end
         end
+    end
+
+    --Change random delay if enabled on each play attempt
+    if add_random_delay then
+        random_delay = math.random(maximum_random_delay)
     end
 end
 )
