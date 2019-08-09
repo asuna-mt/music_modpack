@@ -1,11 +1,14 @@
+local ymax = minetest.settings:get("music_default_underground1_ymax ") or -8
+local ymin = minetest.settings:get("music_default_underground1_ymin") or -800
+
 music.register_track({
     name = "floating_cities",
     length = 184,
     gain = 1,
     day = true,
     night = true,
-    ymin = -800,
-    ymax = -8,
+    ymin = ymin,
+    ymax = ymax,
 })
 
 music.register_track({
@@ -14,8 +17,8 @@ music.register_track({
     gain = 1,
     day = true,
     night = true,
-    ymin = -800,
-    ymax = -8,
+    ymin = ymin,
+    ymax = ymax,
 })
 
 music.register_track({
@@ -24,8 +27,8 @@ music.register_track({
     gain = 1,
     day = true,
     night = true,
-    ymin = -800,
-    ymax = -8,
+    ymin = ymin,
+    ymax = ymax,
 })
 
 music.register_track({
@@ -34,6 +37,6 @@ music.register_track({
     gain = 1,
     day = true,
     night = true,
-    ymin = -800,
-    ymax = -8,
+    ymin = ymin,
+    ymax = ymax,
 })

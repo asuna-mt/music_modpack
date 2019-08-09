@@ -1,11 +1,14 @@
+local ymax = minetest.settings:get("music_default_underground1_ymax ") or -1400
+local ymin = minetest.settings:get("music_default_underground1_ymin") or -31000
+
 music.register_track({
     name = "crypto",
     length = 204,
     gain = 1,
     day = true,
     night = true,
-    ymin = -31000,
-    ymax = -1600,
+    ymin = ymin,
+    ymax = ymax,
 })
 
 music.register_track({
@@ -14,8 +17,8 @@ music.register_track({
     gain = 1,
     day = true,
     night = true,
-    ymin = -31000,
-    ymax = -1600,
+    ymin = ymin,
+    ymax = ymax,
 })
 
 music.register_track({
@@ -24,8 +27,8 @@ music.register_track({
     gain = 1,
     day = true,
     night = true,
-    ymin = -31000,
-    ymax = -1600,
+    ymin = ymin,
+    ymax = ymax,
 })
 
 music.register_track({
@@ -34,8 +37,8 @@ music.register_track({
     gain = 1,
     day = true,
     night = true,
-    ymin = -31000,
-    ymax = -1600,
+    ymin = ymin,
+    ymax = ymax,
 })
 
 music.register_track({
@@ -44,6 +47,6 @@ music.register_track({
     gain = 1,
     day = true,
     night = true,
-    ymin = -31000,
-    ymax = -1600,
+    ymin = ymin,
+    ymax = ymax,
 })

@@ -32,6 +32,18 @@ music.register_track({
 - ymin - minimum elevation for track to play
 - ymax - maximum elevation for track to play
 
+## Settingtypes
+Available settings that you can put in your minetest.conf directly, or access them via "Settings->All Settings->Mods->music_modpack" menu.
+
+```
+music_time_interval = integer, Interval between attempts to play music, default is 300
+music_synchronized = boolean, play same music simultaneously to all players, using only day and night track definition parameters, default is false
+music_global_gain = float, global music volume, default is 0.35
+music_add_random_delay = boolean, if to add a random delay to interval between attempts, default is false
+music_maximum_random_delay = - integer, maximum random delay in seconds, default is 60
+music_display_playback_messages = boolean, display messages when music starts for a certain player, default is false
+```
+
 ## Content
 Default pack features 24 tracks from composer Kevin McLeod. Tracks are split into following categories: surface at  day, surface at night, near underground, medium underground and deep underground. Underground music plays based on height, independently from daytime. Underground height limits are set according to layer levels of [dfcaverns](https://github.com/FaceDeer/dfcaverns/) by FaceDeer. Music is also selected according to layer feel.
 

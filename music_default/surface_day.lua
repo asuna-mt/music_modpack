@@ -1,11 +1,14 @@
+local ymax = minetest.settings:get("music_default_surface_ymax") or 31000
+local ymin = minetest.settings:get("music_default_surface_ymin") or -8
+
 music.register_track({
     name = "almost_new",
     length = 202,
     gain = 1,
     day = true,
     night = false,
-    ymin = -8,
-    ymax = 31000,
+    ymin = ymin,
+    ymax = ymax,
 })
 
 music.register_track({
@@ -14,8 +17,8 @@ music.register_track({
     gain = 1,
     day = true,
     night = false,
-    ymin = -8,
-    ymax = 31000,
+    ymin = ymin,
+    ymax = ymax,
 })
 
 music.register_track({
@@ -24,8 +27,8 @@ music.register_track({
     gain = 1,
     day = true,
     night = false,
-    ymin = -8,
-    ymax = 31000,
+    ymin = ymin,
+    ymax = ymax,
 })
 
 music.register_track({
@@ -34,8 +37,8 @@ music.register_track({
     gain = 1,
     day = true,
     night = false,
-    ymin = -8,
-    ymax = 31000,
+    ymin = ymin,
+    ymax = ymax,
 })
 
 music.register_track({
@@ -44,6 +47,6 @@ music.register_track({
     gain = 1,
     day = true,
     night = false,
-    ymin = -8,
-    ymax = 31000,
+    ymin = ymin,
+    ymax = ymax,
 })
