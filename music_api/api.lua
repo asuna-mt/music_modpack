@@ -33,7 +33,7 @@ minetest.register_on_leaveplayer(function(player)
 function music.register_track(def)
 
     if def.name == nil or def.length == nil then
-        print("Missing track definition parameters!")
+        minetest.log("error", "[Music_api] Missing track definition parameters!")
         return
     end
 
@@ -131,7 +131,7 @@ minetest.register_globalstep(function(dtime)
             --Start playback
             if not v.playing then
                 if display_playback_messages then
-                    print("[Music API]: Starting playblack for:", k, track.name, "Available tracks for user:", #possible_tracks, "Random delay:", random_delay)
+                    minetest.log("info", "[Music API]: Starting playblack for: " .. k .. " " .. track.name .. " Available tracks for user: " .. #possible_tracks .. " Random delay: " .. random_delay)
                 end
                 minetest.sound_play(track.name, {to_player = k, gain = track.gain * global_gain})
                 v.playing = true
