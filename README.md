@@ -1,5 +1,7 @@
 # music_modpack
 
+![Screenshot](screenshot.png)
+
 ## Overview
 Music modpack with API for easy in-game music playback and custom track registration.
 
