@@ -9,7 +9,7 @@ Music modpack with API for easy in-game music playback and custom track registra
 
 - Time-based music
 - Elevation-based music
-- Synchronized playback for all players
+- Formspec for music settings
 
 ## Adding your own music
 Call music.register_track() with following definition:
@@ -38,16 +38,18 @@ music.register_track({
 Available settings that you can put in your minetest.conf directly, or access them via "Settings->All Settings->Mods->music_modpack" menu.
 
 ```
-music_time_interval = integer, Interval between attempts to play music, default is 300
-music_synchronized = boolean, play same music simultaneously to all players, using only day and night track definition parameters, default is false
-music_global_gain = float, global music volume, default is 0.35
-music_add_random_delay = boolean, if to add a random delay to interval between attempts, default is false
-music_maximum_random_delay = - integer, maximum random delay in seconds, default is 60
-music_display_playback_messages = boolean, display messages when music starts for a certain player, default is false
+music_time_interval = integer, Interval between attempts to play music, default is 60
+music_global_gain = float, global music volume, default is 0.3
+music_add_random_delay = boolean, if to add a random delay to interval between attempts, default is true
+music_maximum_random_delay = - integer, maximum random delay in seconds, default is 30
+music_display_playback_messages = boolean, display messages when music starts for a certain player, default is true
 ```
 
+Music packs also provide settingtypes with corresponding height limits.
+
 ## Content
-Default pack features 24 tracks from composer Kevin McLeod. Tracks are split into following categories: surface at  day, surface at night, near underground, medium underground and deep underground. Underground music plays based on height, independently from daytime. Underground height limits are set according to layer levels of [dfcaverns](https://github.com/FaceDeer/dfcaverns/) by FaceDeer. Music is also selected according to layer feel.
+Default pack features 11 tracks from composer Kevin McLeod. Tracks are split into day tracks and night tracks. If music_dfcaverns is not enabled, night tracks also play underground (up to -31000).  
+Music_dfcaverns is an additional pack of music for underground layers from [dfcaverns](https://github.com/FaceDeer/dfcaverns/), featuring 13 tracks from composer Kevin McLeod. Tracks split into three categories, each for one cavern layer from dfcaverns, and their heights are set accordingly. Dfcaverns modpack is not required, however, and it is recommended to enable this pack even without dfcaverns, unless client connection speed is an issue.
 
 ## License
 
