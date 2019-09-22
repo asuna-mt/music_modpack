@@ -1,5 +1,5 @@
-local ymax = minetest.settings:get("music_default_surface_ymax") or 31000
-local ymin = minetest.settings:get("music_default_surface_ymin") or -8
+local ymax = tonumber(minetest.settings:get("music_default_surface_ymax")) or 31000
+local ymin = tonumber(minetest.settings:get("music_default_surface_ymin")) or -8
 
 music.register_track({
     name = "almost_new",

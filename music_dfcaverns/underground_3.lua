@@ -1,5 +1,5 @@
-local ymax = minetest.settings:get("music_default_underground1_ymax ") or -1400
-local ymin = minetest.settings:get("music_default_underground1_ymin") or -31000
+local ymax = tonumber(minetest.settings:get("music_default_underground1_ymax ")) or -1400
+local ymin = tonumber(minetest.settings:get("music_default_underground1_ymin")) or -31000
 
 music.register_track({
     name = "crypto",

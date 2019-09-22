@@ -1,9 +1,9 @@
-local ymax = minetest.settings:get("music_default_underground1_ymax ") or -800
-local ymin = minetest.settings:get("music_default_underground1_ymin") or -1400
+local ymax = tonumber(minetest.settings:get("music_dfcaverns_underground1_ymax ")) or -8
+local ymin = tonumber(minetest.settings:get("music_dfcaverns_underground1_ymin")) or -800
 
 music.register_track({
-    name = "fairytale_waltz",
-    length = 99,
+    name = "floating_cities",
+    length = 184,
     gain = 1,
     day = true,
     night = true,
@@ -12,8 +12,8 @@ music.register_track({
 })
 
 music.register_track({
-    name = "lasting_hope",
-    length = 143,
+    name = "infados",
+    length = 223,
     gain = 1,
     day = true,
     night = true,
@@ -22,8 +22,8 @@ music.register_track({
 })
 
 music.register_track({
-    name = "lost_time",
-    length = 227,
+    name = "morgana_rides",
+    length = 246,
     gain = 1,
     day = true,
     night = true,
@@ -32,8 +32,8 @@ music.register_track({
 })
 
 music.register_track({
-    name = "ossuary_5_rest",
-    length = 235,
+    name = "thunderbird",
+    length = 361,
     gain = 1,
     day = true,
     night = true,
