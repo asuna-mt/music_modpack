@@ -5,11 +5,20 @@
 ## Overview
 Music modpack with API for easy in-game music playback and custom track registration.
 
+## Requirements
+
+- Minetest 5.0.0+
+- Minetest_game 5.0.0+
+- [sfinv_buttons](https://repo.or.cz/minetest_sfinv_buttons.git) (Optional, but highly recommended: easy way to open music settings menu)
+
 ## Features
 
 - Time-based music
 - Elevation-based music
 - Formspec for music settings
+
+## Settings
+By default, settings menu is only available with `/musicsettings` command. If you have sfinv_buttons installed, music menu is available in inventory->more->music settings
 
 ## Adding your own music
 Call music.register_track() with following definition:
@@ -39,6 +48,7 @@ Available settings that you can put in your minetest.conf directly, or access th
 
 ```
 music_time_interval = integer, Interval between attempts to play music, default is 60
+music_cleanup_interval = integer, interval between attempts to clean up player state, default is 5
 music_global_gain = float, global music volume, default is 0.3
 music_add_random_delay = boolean, if to add a random delay to interval between attempts, default is true
 music_maximum_random_delay = - integer, maximum random delay in seconds, default is 30
