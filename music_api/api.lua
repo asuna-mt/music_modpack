@@ -3,11 +3,11 @@ local players = {}
 local tracks = {}
 
 --Settingtypes
-local time_interval = tonumber(minetest.settings:get("music_time_interval")) or 60
+local time_interval = tonumber(minetest.settings:get("music_time_interval")) or 90
 local cleanup_interval = tonumber(minetest.settings:get("music_cleanup_interval")) or 5
-local global_gain = tonumber(minetest.settings:get("music_global_gain")) or 0.3
+local global_gain = tonumber(minetest.settings:get("music_global_gain")) or 0.1
 local add_random_delay = minetest.settings:get_bool("music_add_random_delay", true)
-local maximum_random_delay = tonumber(minetest.settings:get("music_maximum_random_delay")) or 30
+local maximum_random_delay = tonumber(minetest.settings:get("music_maximum_random_delay")) or 45
 local display_playback_messages = minetest.settings:get_bool("music_display_playback_messages", true)
 local random_delay = 0
 
@@ -67,6 +67,12 @@ end
 
 local function play_track(name)
 
+    -- Do not play music for dead players or if music is already playing
+    local p = players[name]
+    if not p or p.is_dead or p.playing then
+        return
+    end
+
     local player = minetest.get_player_by_name(name)
     local player_pos = player:get_pos()
     local possible_tracks = {}
@@ -74,16 +80,17 @@ local function play_track(name)
 
     --Assemble list of fitting tracks
     for _,track in pairs(tracks) do
-        if track.name ~= players[name].previous and ((track.day and time > 0.25 and time < 0.75) or
+        if track.name ~= p.previous and ((track.day and time > 0.25 and time < 0.75) or
         (track.night and ((time < 0.25 and time >= 0) or (time > 0.75 and time <= 1)))) and
-        player_pos.y >= track.ymin and player_pos.y < track.ymax then
+        player_pos.y >= track.ymin and player_pos.y < track.ymax
+        then
             table.insert(possible_tracks, track)
         end
     end
 
     --Return if no music fits
     if #possible_tracks == 0 then
-        players[name].previous = nil
+        p.previous = nil
         return
     end
 
@@ -91,28 +98,27 @@ local function play_track(name)
     local track = possible_tracks[math.random(#possible_tracks)]
 
     --Start playback
-    if not players[name].playing then
-        if display_playback_messages then
-            minetest.log("action", "[Music_api]: Starting playblack for: " .. name .. " " .. track.name .. " Available tracks for user: " .. #possible_tracks .. " Random delay: " .. random_delay)
-        end
-        players[name].track_handle = minetest.sound_play(track.name, {to_player = name, gain = track.gain * global_gain * players[name].settings.gain})
-        players[name].playing = true
-        players[name].previous = track.name
-        players[name].playback_started = os.time()
-        players[name].track_def = track
+    if display_playback_messages then
+        minetest.log("action", "[Music_api]: Starting playblack for: " .. name .. " " .. track.name .. " Available tracks for user: " .. #possible_tracks .. " Random delay: " .. random_delay)
     end
+    p.track_handle = minetest.sound_play(track.name, {to_player = name, gain = track.gain * global_gain * p.settings.gain})
+    p.playing = true
+    p.previous = track.name
+    p.playback_started = os.time()
+    p.track_def = track
 
 end
 
-local function stop_track(name)
-    if players[name] and players[name].playing and players[name].track_handle then
-        minetest.sound_stop(players[name].track_handle)
-        players[name].playing = false
-        players[name].track_handle = nil
-        players[name].playback_started = nil
-        players[name].track_def = nil
+local function stop_track(name,step)
+    local p = players[name]
+    if p and p.playing and p.track_handle then
+        minetest.sound_fade(p.track_handle,step or 0.01,0)
+        p.playing = false
+        p.track_handle = nil
+        p.playback_started = nil
+        p.track_def = nil
         if display_playback_messages then
-            minetest.log("action", "[Music_api]: Stopped playback for: " .. name)
+            minetest.log("action", "[Music_api]: Stopping playback for: " .. name)
         end
     end
 end
@@ -141,15 +147,19 @@ end
 minetest.register_on_player_receive_fields(function(player, formname, fields)
     if formname ~= "music_settings" then return end
     local name = player:get_player_name()
+    local p = players[name]
     if fields.volume then
         local params = minetest.explode_scrollbar_event(fields.volume)
-        players[name].settings.gain = params.value / 1000
+        p.settings.gain = params.value / 1000
     end
     if fields.play then
+        if p.playing then
+            stop_track(name,0.05)
+        end
         play_track(name)
     end
     if fields.stop then
-        stop_track(name)
+        stop_track(name,0.05)
     end
     if fields.accept or fields.quit then
         save_player_settings(name)
@@ -158,7 +168,7 @@ end)
 
 minetest.register_on_joinplayer(function(player)
     local name = player:get_player_name()
-    players[name] = {playing = false, playback_started = nil, track_handle = nil, track_def = nil, previous = nil, settings = {gain = 1}}
+    players[name] = {playing = false, playback_started = nil, track_handle = nil, track_def = nil, previous = nil, settings = {gain = 0.5}, is_dead = player:get_hp() <= 0}
     load_player_settings(name)
 end
 )
@@ -195,11 +205,29 @@ minetest.register_globalstep(function(dtime)
     cleanup_timer = 0
 
     for k,v in pairs(players) do
-        if v.playing and os.time() > v.playback_started + v.track_def.length then
-            stop_track(k)
+        local track = v.track_def
+        if track then
+            if v.playing and os.time() > v.playback_started + track.length then
+                stop_track(k)
+            end
+
+            -- Stop music when it is no longer appropriate for the given conditions
+            if v.playing then
+                local time = minetest.get_timeofday()
+                local player = minetest.get_player_by_name(k)
+                if player then
+                    local player_pos = player:get_pos()
+                    if not ((track.day and time > 0.25 and time < 0.75) or
+                    (track.night and ((time < 0.25 and time >= 0) or (time > 0.75 and time <= 1)))) or
+                    player_pos.y < track.ymin or player_pos.y > track.ymax
+                    then
+                        stop_track(k)
+                        play_track(k) -- start new track for the appropriate conditions
+                    end
+                end
+            end
         end
     end
-
 end)
 
 local track_timer = 0
@@ -214,7 +242,7 @@ minetest.register_globalstep(function(dtime)
     if next(tracks) == nil then return end
 
     --Play music for every player
-    for k,_ in pairs(players) do
+    for k,v in pairs(players) do
         play_track(k)
     end
 
@@ -245,3 +273,16 @@ function music.register_track(def)
 
     table.insert(tracks, track_def)
 end
+
+-- Don't play music for dead players
+minetest.register_on_dieplayer(function(player)
+    local name = player:get_player_name()
+    stop_track(name,0.025)
+    players[name].is_dead = true
+end)
+
+-- Enable music for respawned players
+minetest.register_on_dieplayer(function(player)
+    local name = player:get_player_name()
+    players[name].is_dead = false
+end)
