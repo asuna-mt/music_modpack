@@ -217,8 +217,8 @@ minetest.register_globalstep(function(dtime)
                 local player = minetest.get_player_by_name(k)
                 if player then
                     local player_pos = player:get_pos()
-                    if not ((track.day and time > 0.25 and time < 0.75) or
-                    (track.night and ((time < 0.25 and time >= 0) or (time > 0.75 and time <= 1)))) or
+                    if not ((track.day and time > 0.205 and time < 0.76) or
+                    (track.night and ((time < 0.205 and time >= 0) or (time > 0.76 and time <= 1)))) or
                     player_pos.y < track.ymin or player_pos.y > track.ymax
                     then
                         stop_track(k)
